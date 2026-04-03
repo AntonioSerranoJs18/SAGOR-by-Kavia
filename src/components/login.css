@@ -1,0 +1,174 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.login-container {
+  height: 100vh;
+  background: url("https://cdn.easy-rez.com/production/hotels/d42cc43131e72f69151461fa5d3c1a66/public/.galleries/recepcion/kavia_chariot_dsc08624_ea.jpg_1500x996.2546816479401_0-3.745318352059925.jpg")
+    no-repeat center/cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Oscurecer fondo */
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(2, 6, 23, 0.7);
+}
+
+/* 🔥 CARD TRANSPARENTE (GLASS) */
+.login-box {
+  position: relative;
+  width: 380px;
+  padding: 40px;
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+
+  color: #fff;
+  transition: 0.3s;
+}
+
+/* Hover elegante */
+.login-box:hover {
+  transform: translateY(-4px);
+}
+
+/* HEADER */
+.header h1 {
+  font-size: 36px;
+  letter-spacing: 2px;
+}
+
+.header p {
+  font-size: 12px;
+  margin-top: 5px;
+  color: #cbd5f5;
+}
+
+.header span {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* FORM */
+.form {
+  margin-top: 30px;
+}
+
+/* INPUTS */
+.input-box {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+/* INPUT estilo glass */
+.input-box input {
+  width: 100%;
+  padding: 12px 40px 12px 35px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #fff;
+  outline: none;
+  transition: 0.3s;
+}
+
+/* Focus elegante */
+.input-box input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+
+/* LABEL animado */
+.input-box label {
+  position: absolute;
+  left: 35px;
+  top: 12px;
+  color: #94a3b8;
+  font-size: 13px;
+  pointer-events: none;
+  transition: 0.3s;
+}
+
+/* Animación */
+.input-box input:focus ~ label,
+.input-box input:valid ~ label {
+  top: -8px;
+  left: 30px;
+  font-size: 10px;
+  background: rgba(15, 23, 42, 0.9);
+  padding: 0 5px;
+  color: #38bdf8;
+  border-radius: 4px;
+}
+
+/* ICONO */
+.icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* TOGGLE PASSWORD */
+.toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+/* Hover más profesional */
+.toggle:hover {
+  color: #38bdf8;
+}
+
+/* BOTÓN */
+.btn-login {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+
+  background: linear-gradient(90deg, #0ea5e9, #2563eb);
+  color: white;
+  font-weight: bold;
+
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Hover botón */
+.btn-login:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 15px rgba(14, 165, 233, 0.6);
+}
+
+/* FOOTER */
+.footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 11px;
+  color: #94a3b8;
+}
