@@ -1,0 +1,109 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.cortes {
+  padding: 30px;
+  background: #f1f5f9;
+  min-height: 100vh;
+}
+
+/* HEADER */
+.cortes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.cortes-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* FILTROS */
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.actions input,
+.actions select {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 14px;
+}
+
+.actions input:focus,
+.actions select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* GRAFICA */
+.chart-container {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 18px;
+  margin-bottom: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+.chart-container h3 {
+  margin-bottom: 15px;
+  color: #1e293b;
+}
+
+/* TABLA */
+.table-container {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  font-size: 12px;
+  color: #64748b;
+  padding-bottom: 10px;
+}
+
+.table td {
+  padding: 14px 0;
+  border-top: 1px solid #e2e8f0;
+  color: #0f172a;
+}
+
+.table tr:hover {
+  background: #f8fafc;
+}
+
+/* BADGES */
+.badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.badge.ok {
+  background: rgba(34,197,94,0.1);
+  color: #15803d;
+}
+
+.badge.pending {
+  background: rgba(245,158,11,0.2);
+  color: #b45309;
+}
