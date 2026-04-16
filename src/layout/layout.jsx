@@ -1,22 +1,61 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./layout.css";
+import { 
+  FaChartLine, 
+  FaClipboardList, 
+  FaCut, 
+  FaUsers, 
+  FaFileAlt,
+  FaSignOutAlt,
+  FaHotel
+} from "react-icons/fa";
 
 const Layout = ({ children }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Limpiar localStorage
+    localStorage.removeItem("usuarioActual");
+    localStorage.removeItem("usuarios");
+    // Redirigir al login
+    navigate("/login");
+  };
+
   return (
     <div className="app">
       
       {/* SIDEBAR */}
       <aside className="sidebar">
-        <h2 className="logo">SAGOR</h2>
+        <div className="sidebar-header">
+          <FaHotel className="logo-icon" />
+          <h2 className="logo">SAGOR</h2>
+        </div>
 
-        <nav>
-          <Link to="/">Dashboard</Link>
-          <Link to="/turnos">Turnos</Link>
-          <Link to="/cortes">Cortes</Link>
-          <Link to="/usuarios">Usuarios</Link>
-          <Link to="/reportes">Reportes</Link>
+        <nav className="sidebar-nav">
+          <Link to="/" className="nav-link">
+            <FaChartLine /> Dashboard
+          </Link>
+          <Link to="/turnos" className="nav-link">
+            <FaClipboardList /> Turnos
+          </Link>
+          <Link to="/cortes" className="nav-link">
+            <FaCut /> Cortes
+          </Link>
+          <Link to="/usuarios" className="nav-link">
+            <FaUsers /> Usuarios
+          </Link>
+          <Link to="/reportes" className="nav-link">
+            <FaFileAlt /> Reportes
+          </Link>
         </nav>
+
+        {/* BOTÓN DE CERRAR SESIÓN EN LA PARTE DE ABAJO */}
+        <div className="sidebar-footer">
+          <button className="btn-logout" onClick={handleLogout}>
+            <FaSignOutAlt /> Cerrar Sesión
+          </button>
+        </div>
       </aside>
 
       {/* CONTENIDO */}
