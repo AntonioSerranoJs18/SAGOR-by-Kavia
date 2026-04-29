@@ -79,6 +79,11 @@ switch ($method) {
         $tipo_turno = $body['tipo_turno'] ?? turnoDesdeHora();
         $fecha      = $body['fecha']      ?? date('Y-m-d');
 
+        /* ── Solo cajeros pueden iniciar turnos ── */
+        if ($auth['rol'] === 'admin') {
+            jsonResponse(['error' => 'Los turnos los inician los cajeros.'], 403);
+        }
+
         // 1. Usuario ya tiene turno activo
         $stmt = $db->prepare("SELECT id FROM turnos WHERE usuario_id = ? AND estado = 'Activo'");
         $stmt->execute([$auth['id']]);
@@ -95,9 +100,9 @@ switch ($method) {
         }
 
         // 3. Turno anterior debe estar finalizado
-        $orden     = ['Matutino', 'Vespertino', 'Nocturno'];
-        $idx       = array_search($tipo_turno, $orden);
-        $prevTipo  = $orden[($idx + 2) % 3];                                  // turno previo en ciclo
+        $orden    = ['Matutino', 'Vespertino', 'Nocturno'];
+        $idx      = array_search($tipo_turno, $orden);
+        $prevTipo = $orden[($idx + 2) % 3];
         $prevFecha = ($idx === 0)
             ? date('Y-m-d', strtotime($fecha . ' -1 day'))
             : $fecha;

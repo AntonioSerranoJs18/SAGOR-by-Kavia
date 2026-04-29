@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import "./DashboardRecepcionista.css";
 import {
   FaHistory, FaPlusCircle, FaSun, FaCloudSun, FaMoon,
-  FaEye, FaEdit, FaTrash, FaSpinner, FaTimes,
-  FaMoneyBillWave, FaCreditCard, FaUniversity, FaReceipt, FaHotel,
+  FaSpinner, FaMoneyBillWave, FaCreditCard, FaUniversity, FaReceipt, FaHotel,
 } from "react-icons/fa";
+import { Eye, PencilLine, Trash2, X } from "lucide-react";
 import { getUsuario, getToken, api } from "../../services/api";
 
 const turnoColor = { Matutino: "#f59e0b", Vespertino: "#fb923c", Nocturno: "#818cf8" };
@@ -125,9 +125,9 @@ export default function MisCortes() {
                     <td className="total-cell">{fmt(c.total_general)}</td>
                     <td>
                       <div className="acciones-cell">
-                        <button className="btn-accion ver"      title="Ver detalle"  onClick={() => verDetalle(c)}><FaEye /></button>
-                        <button className="btn-accion editar"   title="Editar"       onClick={() => navigate(`/editar-corte/${c.id}`)}><FaEdit /></button>
-                        <button className="btn-accion eliminar" title="Eliminar"     onClick={() => confirmarEliminar(c.id)}><FaTrash /></button>
+                        <button className="btn-accion ver"      title="Ver detalle"  onClick={() => verDetalle(c)}><Eye size={15} strokeWidth={2} /></button>
+                        <button className="btn-accion editar"   title="Editar"       onClick={() => navigate(`/editar-corte/${c.id}`)}><PencilLine size={15} strokeWidth={2} /></button>
+                        <button className="btn-accion eliminar" title="Eliminar"     onClick={() => confirmarEliminar(c.id)}><Trash2 size={15} strokeWidth={2} /></button>
                       </div>
                     </td>
                   </tr>
@@ -144,7 +144,7 @@ export default function MisCortes() {
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Detalle del Corte — {fmtFecha(modalDetalle.fecha)}</h3>
-              <button className="modal-close" onClick={() => setModalDetalle(null)}><FaTimes /></button>
+              <button className="modal-close" onClick={() => setModalDetalle(null)}><X size={16} strokeWidth={2} /></button>
             </div>
 
             {cargandoModal ? (
@@ -264,7 +264,7 @@ export default function MisCortes() {
           <div className="modal-box" style={{ maxWidth: 420 }}>
             <div className="modal-header" style={{ background: "#fef2f2" }}>
               <h3 style={{ color: "#dc2626" }}>¿Eliminar este corte?</h3>
-              <button className="modal-close" onClick={() => setConfirmId(null)}><FaTimes /></button>
+              <button className="modal-close" onClick={() => setConfirmId(null)}><X size={16} strokeWidth={2} /></button>
             </div>
             <div className="modal-body" style={{ textAlign: "center" }}>
               <p style={{ color: "#64748b", marginBottom: 24 }}>
