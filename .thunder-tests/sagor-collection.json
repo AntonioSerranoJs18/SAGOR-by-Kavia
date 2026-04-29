@@ -1,0 +1,133 @@
+{
+  "_id": "sagor-collection",
+  "colName": "SAGOR API",
+  "created": "2026-04-22T00:00:00.000Z",
+  "folders": [
+    { "_id": "f-auth",     "name": "Auth",     "containerId": "" },
+    { "_id": "f-usuarios", "name": "Usuarios", "containerId": "" },
+    { "_id": "f-turnos",   "name": "Turnos",   "containerId": "" },
+    { "_id": "f-cortes",   "name": "Cortes",   "containerId": "" },
+    { "_id": "f-reportes", "name": "Reportes", "containerId": "" }
+  ],
+  "requests": [
+    {
+      "_id": "r-login",
+      "colId": "sagor-collection",
+      "containerId": "f-auth",
+      "name": "Login",
+      "url": "http://localhost/sagor-api/api/auth/login.php",
+      "method": "POST",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"admin@hotelchariot.com\",\n  \"password\": \"sagor2026\"\n}"
+      },
+      "params": [],
+      "tests": []
+    },
+    {
+      "_id": "r-login-cajero",
+      "colId": "sagor-collection",
+      "containerId": "f-auth",
+      "name": "Login (cajero)",
+      "url": "http://localhost/sagor-api/api/auth/login.php",
+      "method": "POST",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"cristian@hotelchariot.com\",\n  \"password\": \"sagor2026\"\n}"
+      },
+      "params": [],
+      "tests": []
+    },
+    {
+      "_id": "r-usuarios-get",
+      "colId": "sagor-collection",
+      "containerId": "f-usuarios",
+      "name": "GET Usuarios",
+      "url": "http://localhost/sagor-api/api/usuarios/index.php",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }],
+      "body": { "type": "none" },
+      "params": [],
+      "tests": []
+    },
+    {
+      "_id": "r-turnos-get",
+      "colId": "sagor-collection",
+      "containerId": "f-turnos",
+      "name": "GET Turnos",
+      "url": "http://localhost/sagor-api/api/turnos/index.php",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }],
+      "body": { "type": "none" },
+      "params": [
+        { "name": "fecha", "value": "2026-04-22", "isPath": false }
+      ],
+      "tests": []
+    },
+    {
+      "_id": "r-turnos-post",
+      "colId": "sagor-collection",
+      "containerId": "f-turnos",
+      "name": "POST Turno",
+      "url": "http://localhost/sagor-api/api/turnos/index.php",
+      "method": "POST",
+      "headers": [
+        { "name": "Content-Type",  "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"tipo_turno\": \"Matutino\",\n  \"fecha\": \"2026-04-22\",\n  \"nombre_empleado\": \"Cristian Serrano\"\n}"
+      },
+      "params": [],
+      "tests": []
+    },
+    {
+      "_id": "r-cortes-post",
+      "colId": "sagor-collection",
+      "containerId": "f-cortes",
+      "name": "POST Corte de Caja",
+      "url": "http://localhost/sagor-api/api/cortes/index.php",
+      "method": "POST",
+      "headers": [
+        { "name": "Content-Type",  "value": "application/json" },
+        { "name": "Authorization", "value": "Bearer {{token}}" }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"turno\": \"Matutino\",\n  \"fecha\": \"2026-04-22\",\n  \"efectivo_total\": 5200,\n  \"tarjetas_total\": 3800,\n  \"bancos_total\": 0,\n  \"gastos_total\": 450,\n  \"total_general\": 8550,\n  \"habitaciones_atendidas\": 12,\n  \"detalle_efectivo\": [\n    { \"denominacion\": 500, \"cantidad\": 5, \"subtotal\": 2500 },\n    { \"denominacion\": 200, \"cantidad\": 10, \"subtotal\": 2000 },\n    { \"denominacion\": 100, \"cantidad\": 7, \"subtotal\": 700 }\n  ],\n  \"detalle_tarjetas\": [\n    { \"tipo\": \"Visa\",       \"digitos\": \"4521\", \"monto\": 2100 },\n    { \"tipo\": \"Mastercard\", \"digitos\": \"8834\", \"monto\": 1700 }\n  ],\n  \"detalle_gastos\": [\n    { \"concepto\": \"Papelería\",   \"monto\": 250 },\n    { \"concepto\": \"Limpieza\",    \"monto\": 200 }\n  ]\n}"
+      },
+      "params": [],
+      "tests": []
+    },
+    {
+      "_id": "r-cortes-get",
+      "colId": "sagor-collection",
+      "containerId": "f-cortes",
+      "name": "GET Cortes",
+      "url": "http://localhost/sagor-api/api/cortes/index.php",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }],
+      "body": { "type": "none" },
+      "params": [],
+      "tests": []
+    },
+    {
+      "_id": "r-reportes-get",
+      "colId": "sagor-collection",
+      "containerId": "f-reportes",
+      "name": "GET Reportes (rango fecha)",
+      "url": "http://localhost/sagor-api/api/reportes/index.php",
+      "method": "GET",
+      "headers": [{ "name": "Authorization", "value": "Bearer {{token}}" }],
+      "body": { "type": "none" },
+      "params": [
+        { "name": "fecha_inicio", "value": "2026-04-01", "isPath": false },
+        { "name": "fecha_fin",    "value": "2026-04-30", "isPath": false }
+      ],
+      "tests": []
+    }
+  ]
+}
