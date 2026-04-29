@@ -5,6 +5,140 @@
   font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
+/* ══════════════════════════════════════
+   TARJETA DE TURNO
+══════════════════════════════════════ */
+.turno-card {
+  background: white;
+  border-radius: 24px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+  border: 1.5px solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
+}
+.turno-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+}
+.turno-card-activo::before   { background: linear-gradient(90deg, #22c55e, #16a34a); }
+.turno-card-libre::before    { background: linear-gradient(90deg, #3b82f6, #6366f1); }
+.turno-card-bloqueado::before{ background: linear-gradient(90deg, #f59e0b, #ef4444); }
+
+.tc-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.tc-badge.activo   { background: #dcfce7; color: #16a34a; }
+.tc-badge.libre    { background: #dbeafe; color: #2563eb; }
+.tc-badge.bloqueado{ background: #fef3c7; color: #d97706; }
+
+.tc-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  animation: pulso 1.4s ease-in-out infinite;
+}
+@keyframes pulso {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.7); }
+}
+
+.tc-turno-nombre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tc-horario {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.tc-sub {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin: 0 0 18px;
+}
+
+/* Estado del corte dentro de la tarjeta */
+.tc-corte-estado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  width: fit-content;
+}
+.tc-corte-estado.ok       { background: #dcfce7; color: #16a34a; }
+.tc-corte-estado.pendiente{ background: #fef9c3; color: #ca8a04; }
+
+/* Botones dentro de la tarjeta */
+.tc-acciones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.tc-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+.tc-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none !important; }
+
+.tc-btn.iniciar  { background: linear-gradient(135deg, #3b82f6, #6366f1); color: white; }
+.tc-btn.registrar{ background: linear-gradient(135deg, #f59e0b, #fb923c); color: white; }
+.tc-btn.finalizar{ background: linear-gradient(135deg, #22c55e, #16a34a); color: white; }
+
+/* Alertas */
+.turno-alerta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 18px;
+}
+.turno-alerta-error { background: #fee2e2; color: #dc2626; }
+.turno-alerta-warn  { background: #fef9c3; color: #ca8a04; margin-bottom: 20px; }
+
 /* HEADER */
 .dash-rec-header {
   background: linear-gradient(135deg, #1e293b, #0f172a);
@@ -292,18 +426,48 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: none;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid transparent;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 0.78rem;
-  transition: opacity 0.15s, transform 0.15s;
+  transition: all 0.18s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
-.btn-accion:hover { opacity: 0.82; transform: scale(1.08); }
-.btn-accion.ver     { background: #dbeafe; color: #2563eb; }
-.btn-accion.editar  { background: #fef9c3; color: #d97706; }
-.btn-accion.eliminar{ background: #fee2e2; color: #dc2626; }
+.btn-accion:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.14);
+}
+.btn-accion.ver {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+.btn-accion.ver:hover {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  border-color: #1d4ed8;
+}
+.btn-accion.editar {
+  background: linear-gradient(135deg, #fffbeb, #fef9c3);
+  color: #d97706;
+  border-color: #fde68a;
+}
+.btn-accion.editar:hover {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border-color: #d97706;
+}
+.btn-accion.eliminar {
+  background: linear-gradient(135deg, #fff1f2, #fee2e2);
+  color: #dc2626;
+  border-color: #fecaca;
+}
+.btn-accion.eliminar:hover {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border-color: #dc2626;
+}
 
 .btn-accion-cancelar {
   padding: 10px 24px;

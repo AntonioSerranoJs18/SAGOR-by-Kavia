@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./NuevoCorte.css";
 import {
@@ -28,6 +28,18 @@ export default function NuevoCorte() {
 
   const [turno, setTurno] = useState(getTurnoActual());
   const [fecha, setFecha] = useState(hoy);
+
+  // Pre-cargar turno y fecha desde el turno activo del recepcionista
+  useEffect(() => {
+    api.get("/api/turnos/index.php?estado_inicio=1", token)
+      .then((data) => {
+        if (data?.turno_activo_propio) {
+          setTurno(data.turno_activo_propio.tipo_turno);
+          setFecha(data.turno_activo_propio.fecha);
+        }
+      })
+      .catch(() => {});
+  }, [token]);
   const [efectivo, setEfectivo] = useState(initEfectivo());
 
   const [tarjetas, setTarjetas] = useState([{ tipo: "", monto: "" }]);
