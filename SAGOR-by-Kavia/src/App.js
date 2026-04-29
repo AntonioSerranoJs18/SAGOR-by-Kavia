@@ -10,6 +10,7 @@ import Reportes from "./components/reportes";
 import DashboardRecepcionista from "./components/recepcionista/DashboardRecepcionista";
 import NuevoCorte from "./components/recepcionista/NuevoCorte";
 import MisCortes from "./components/recepcionista/MisCortes";
+import EditarCorte from "./components/recepcionista/EditarCorte";
 import { getToken, getUsuario } from "./services/api";
 
 // Componente propio para que getUsuario() se llame en cada render, no desde closure de App
@@ -78,6 +79,11 @@ function App() {
         <Route path="/mis-cortes" element={
           <ProtectedRoute rolRequerido="cajero">
             <Layout><MisCortes /></Layout>
+          </ProtectedRoute>
+        } />
+        <Route path="/editar-corte/:id" element={
+          <ProtectedRoute rolRequerido="cajero">
+            <Layout><EditarCorte /></Layout>
           </ProtectedRoute>
         } />
 

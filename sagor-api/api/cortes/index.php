@@ -86,66 +86,15 @@ switch ($method) {
                 $body['fecha'],
                 $body['efectivo_total'],
                 $body['tarjetas_total'],
-                $body['bancos_total']             ?? 0,
+                $body['bancos_total']           ?? 0,
                 $body['gastos_total'],
                 $body['total_general'],
-                $body['habitaciones_atendidas']   ?? 0,
-                $body['observaciones']            ?? null,
+                $body['habitaciones_atendidas'] ?? 0,
+                $body['observaciones']          ?? null,
             ]);
             $corteId = $db->lastInsertId();
 
-            if (!empty($body['detalle_efectivo'])) {
-                $stmtEf = $db->prepare(
-                    'INSERT INTO detalle_efectivo (corte_id, denominacion, cantidad, subtotal) VALUES (?, ?, ?, ?)'
-                );
-                foreach ($body['detalle_efectivo'] as $row) {
-                    $stmtEf->execute([$corteId, $row['denominacion'], $row['cantidad'], $row['subtotal']]);
-                }
-            }
-
-            if (!empty($body['detalle_tarjetas'])) {
-                $stmtTj = $db->prepare(
-                    'INSERT INTO detalle_tarjetas (corte_id, tipo, ultimos_cuatro, monto) VALUES (?, ?, ?, ?)'
-                );
-                foreach ($body['detalle_tarjetas'] as $row) {
-                    $stmtTj->execute([$corteId, $row['tipo'], $row['digitos'] ?? null, $row['monto']]);
-                }
-            }
-
-            if (!empty($body['detalle_gastos'])) {
-                $stmtGs = $db->prepare(
-                    'INSERT INTO detalle_gastos (corte_id, concepto, monto) VALUES (?, ?, ?)'
-                );
-                foreach ($body['detalle_gastos'] as $row) {
-                    $stmtGs->execute([$corteId, $row['concepto'], $row['monto']]);
-                }
-            }
-
-            if (!empty($body['detalle_bancos'])) {
-                $stmtBk = $db->prepare(
-                    'INSERT INTO detalle_bancos (corte_id, deposito, monto) VALUES (?, ?, ?)'
-                );
-                foreach ($body['detalle_bancos'] as $row) {
-                    $stmtBk->execute([$corteId, $row['deposito'], $row['monto']]);
-                }
-            }
-
-            if (!empty($body['detalle_habitaciones'])) {
-                $stmtHb = $db->prepare(
-                    'INSERT INTO detalle_habitaciones (corte_id, habitacion, cantidad, folio, forma_pago, descripcion)
-                     VALUES (?, ?, ?, ?, ?, ?)'
-                );
-                foreach ($body['detalle_habitaciones'] as $row) {
-                    $stmtHb->execute([
-                        $corteId,
-                        $row['habitacion'],
-                        $row['cantidad']   ?? 1,
-                        $row['folio']      ?? null,
-                        $row['forma_pago'] ?? null,
-                        $row['descripcion']?? null,
-                    ]);
-                }
-            }
+            insertarDetalles($db, $corteId, $body);
 
             $db->commit();
             jsonResponse(['mensaje' => 'Corte registrado', 'id' => $corteId], 201);
@@ -155,16 +104,119 @@ switch ($method) {
             jsonResponse(['error' => 'Error al registrar el corte'], 500);
         }
 
-    case 'DELETE':
-        if ($auth['rol'] !== 'admin') jsonResponse(['error' => 'Sin permisos'], 403);
-
+    case 'PUT':
         $id = (int)($_GET['id'] ?? 0);
         if (!$id) jsonResponse(['error' => 'ID requerido'], 400);
 
-        // ON DELETE CASCADE elimina los detalles automáticamente
+        $stmt = $db->prepare('SELECT usuario_id FROM cortes WHERE id = ?');
+        $stmt->execute([$id]);
+        $corte = $stmt->fetch();
+        if (!$corte) jsonResponse(['error' => 'Corte no encontrado'], 404);
+        if ($auth['rol'] !== 'admin' && (int)$corte['usuario_id'] !== (int)$auth['id']) {
+            jsonResponse(['error' => 'Sin permisos'], 403);
+        }
+
+        $body     = getRequestBody();
+        $required = ['turno', 'fecha', 'efectivo_total', 'tarjetas_total', 'gastos_total', 'total_general'];
+        foreach ($required as $field) {
+            if (!isset($body[$field])) jsonResponse(['error' => "Campo requerido: $field"], 400);
+        }
+
+        try {
+            $db->beginTransaction();
+
+            $stmt = $db->prepare(
+                'UPDATE cortes SET turno=?, fecha=?, efectivo_total=?, tarjetas_total=?,
+                 bancos_total=?, gastos_total=?, total_general=?, habitaciones_atendidas=?,
+                 observaciones=? WHERE id=?'
+            );
+            $stmt->execute([
+                $body['turno'],
+                $body['fecha'],
+                $body['efectivo_total'],
+                $body['tarjetas_total'],
+                $body['bancos_total']           ?? 0,
+                $body['gastos_total'],
+                $body['total_general'],
+                $body['habitaciones_atendidas'] ?? 0,
+                $body['observaciones']          ?? null,
+                $id,
+            ]);
+
+            foreach (['detalle_efectivo','detalle_tarjetas','detalle_gastos','detalle_bancos','detalle_habitaciones'] as $t) {
+                $db->prepare("DELETE FROM $t WHERE corte_id = ?")->execute([$id]);
+            }
+
+            insertarDetalles($db, $id, $body);
+
+            $db->commit();
+            jsonResponse(['mensaje' => 'Corte actualizado']);
+
+        } catch (Exception $e) {
+            $db->rollBack();
+            jsonResponse(['error' => 'Error al actualizar el corte'], 500);
+        }
+
+    case 'DELETE':
+        $id = (int)($_GET['id'] ?? 0);
+        if (!$id) jsonResponse(['error' => 'ID requerido'], 400);
+
+        $stmt = $db->prepare('SELECT usuario_id FROM cortes WHERE id = ?');
+        $stmt->execute([$id]);
+        $corte = $stmt->fetch();
+        if (!$corte) jsonResponse(['error' => 'Corte no encontrado'], 404);
+        if ($auth['rol'] !== 'admin' && (int)$corte['usuario_id'] !== (int)$auth['id']) {
+            jsonResponse(['error' => 'Sin permisos'], 403);
+        }
+
         $db->prepare('DELETE FROM cortes WHERE id = ?')->execute([$id]);
         jsonResponse(['mensaje' => 'Corte eliminado']);
 
     default:
         jsonResponse(['error' => 'Método no permitido'], 405);
+}
+
+/* ── helper reutilizable para insertar detalles ── */
+function insertarDetalles(PDO $db, int $corteId, array $body): void
+{
+    if (!empty($body['detalle_efectivo'])) {
+        $st = $db->prepare('INSERT INTO detalle_efectivo (corte_id, denominacion, cantidad, subtotal) VALUES (?, ?, ?, ?)');
+        foreach ($body['detalle_efectivo'] as $r) {
+            $st->execute([$corteId, $r['denominacion'], $r['cantidad'], $r['subtotal']]);
+        }
+    }
+    if (!empty($body['detalle_tarjetas'])) {
+        $st = $db->prepare('INSERT INTO detalle_tarjetas (corte_id, tipo, ultimos_cuatro, monto) VALUES (?, ?, ?, ?)');
+        foreach ($body['detalle_tarjetas'] as $r) {
+            $st->execute([$corteId, $r['tipo'], $r['digitos'] ?? null, $r['monto']]);
+        }
+    }
+    if (!empty($body['detalle_gastos'])) {
+        $st = $db->prepare('INSERT INTO detalle_gastos (corte_id, concepto, monto) VALUES (?, ?, ?)');
+        foreach ($body['detalle_gastos'] as $r) {
+            $st->execute([$corteId, $r['concepto'], $r['monto']]);
+        }
+    }
+    if (!empty($body['detalle_bancos'])) {
+        $st = $db->prepare('INSERT INTO detalle_bancos (corte_id, deposito, monto) VALUES (?, ?, ?)');
+        foreach ($body['detalle_bancos'] as $r) {
+            $st->execute([$corteId, $r['deposito'], $r['monto']]);
+        }
+    }
+    if (!empty($body['detalle_habitaciones'])) {
+        $st = $db->prepare(
+            'INSERT INTO detalle_habitaciones (corte_id, habitacion, cantidad, folio, forma_pago, descripcion)
+             VALUES (?, ?, ?, ?, ?, ?)'
+        );
+        foreach ($body['detalle_habitaciones'] as $r) {
+            $st->execute([
+                $corteId,
+                $r['habitacion'],
+                $r['cantidad']    ?? 1,
+                $r['folio']       ?? null,
+                $r['forma_pago']  ?? null,
+                $r['descripcion'] ?? null,
+            ]);
+        }
+    }
 }
